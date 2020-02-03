@@ -1,165 +1,53 @@
-# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Project 3: Web APIs & NLP
+# Project 3 : Web APIs & NLP 
 
-### Description
-
-In week four we've learned about a few different classifiers. In week five we'll learn about webscraping, APIs, and Natural Language Processing (NLP). This project will put those skills to the test.
-
-For project 3, your goal is two-fold:
-1. Using [Pushshift's](https://github.com/pushshift/api) API, you'll collect posts from two subreddits of your choosing.
-2. You'll then use NLP to train a classifier on which subreddit a given post came from. This is a binary classification problem.
-
-
-#### About the API
-
-Pushshift's API is fairly straightforward. For example, if I want the posts from [`/r/boardgames`](https://www.reddit.com/r/boardgames), all I have to do is use the following url: https://api.pushshift.io/reddit/search/submission?subreddit=boardgames
-
-To help you get started, we have a primer video on how to use the API: https://youtu.be/eGi8jf1wHgw
-
+### Table of Contents:
+- [Problem Statement](#Problem-Statement)
+- [Executive Summary](#Executive-Summary)
+- [Conclusion](#Conclusion)
+- [Recommendation](#Recommendation)
+- [Datasets](#Datasets)
 ---
+### Problem Statement
 
-### Requirements
-
-- Gather and prepare your data using the `requests` library.
-- **Create and compare two models**. One of these must be a Bayes classifier, however the other can be a classifier of your choosing: logistic regression, KNN, SVM, etc.
-- A Jupyter Notebook with your analysis for a peer audience of data scientists.
-- An executive summary of your results.
-- A short presentation outlining your process and findings for a semi-technical audience.
-
-**Pro Tip:** You can find a good example executive summary [here](https://www.proposify.biz/blog/executive-summary).
-
----
-
-### Necessary Deliverables / Submission
-
-- Code and executive summary must be in a clearly commented Jupyter Notebook.
-- You must submit your slide deck.
-- Materials must be submitted by **10:00 AM on Friday, January 31st**.
-
----
-
-## Rubric
-Your local instructor will evaluate your project (for the most part) using the following criteria.  You should make sure that you consider and/or follow most if not all of the considerations/recommendations outlined below **while** working through your project.
-
-For Project 3 the evaluation categories are as follows:<br>
-**The Data Science Process**
-- Problem Statement
-- Data Collection
-- Data Cleaning & EDA
-- Preprocessing & Modeling
-- Evaluation and Conceptual Understanding
-- Conclusion and Recommendations
-
-**Organization and Professionalism**
-- Organization
-- Visualizations
-- Python Syntax and Control Flow
-- Presentation
-
-**Scores will be out of 30 points based on the 10 categories in the rubric.** <br>
-*3 points per section*<br>
-
-| Score | Interpretation |
-| --- | --- |
-| **0** | *Project fails to meet the minimum requirements for this item.* |
-| **1** | *Project meets the minimum requirements for this item, but falls significantly short of portfolio-ready expectations.* |
-| **2** | *Project exceeds the minimum requirements for this item, but falls short of portfolio-ready expectations.* |
-| **3** | *Project meets or exceeds portfolio-ready expectations; demonstrates a thorough understanding of every outlined consideration.* |
+Given a joke from a user, can we use a predictive modeling technique to determine whether a joke is a “dad joke” or a regular “joke” using subreddits r/dadjokes & r/jokes as a basis? Metrics used for determination will be accuracy score.
 
 
-### The Data Science Process
+### Executive Summary
 
-**Problem Statement**
-- Is it clear what the goal of the project is?
-- What type of model will be developed?
-- How will success be evaluated?
-- Is the scope of the project appropriate?
-- Is it clear who cares about this or why this is important to investigate?
-- Does the student consider the audience and the primary and secondary stakeholders?
+In order to begin any portion of this project, we first needed to figure out a method of approach in order to obtain the correct dataset to work with.  From outside research, we were introducced to an open source data scraping API, "pushshift.io", an API created and maintained by Jason Michael Baumgartner that allows the user to obtain a dictionary of subreddit data then converts it to a usable dataframe.  Using the pushshift API, we were able to access 85 reddit specific parameters that we can select from to data scrape.  In our case, we scraped the 'title' & 'selftext' features to combine in order to create our evaluation metrics.  
 
-**Data Collection**
-- Was enough data gathered to generate a significant result?
-- Was data collected that was useful and relevant to the project?
-- Was data collection and storage optimized through custom functions, pipelines, and/or automation?
-- Was thought given to the server receiving the requests such as considering number of requests per second?
+Following the use of pushshift API, we conducted a pre-eda where we crreated a new column to combine the texts in 'title' & 'selftext' columns.  Then, we removed the blanks, duplicates, HTML tags, non-letters, webpage links, and download pages to do an initial cleaning of our dataset.  Afterwards, We tokenized our text into a list of words using regular expression for main usage as well as lemmatization for our Multinomial Naive Bayes modeling.  
 
-**Data Cleaning and EDA**
-- Are missing values imputed/handled appropriately?
-- Are distributions examined and described?
-- Are outliers identified and addressed?
-- Are appropriate summary statistics provided?
-- Are steps taken during data cleaning and EDA framed appropriately?
-- Does the student address whether or not they are likely to be able to answer their problem statement with the provided data given what they've discovered during EDA?
+Using our tokenized words, we plotted to visualize the word frequency by subreddit to observe if there are any particular trends with certain words being used decisively more often in one subreddit vs. another.  Dissapointingly enough, we observed many words of multiple frequency yet none of the words seemed to have direct indication of whether the word belonged specifically to one subreddit or another.  Some of the most common words found were found in both subreddits and/or were too generic (such as 'im', 'said','dont','know').  A preliminary assumption we can deduce from this is that these can be used as stopwords that we can incorporate in our models.  Also, we decided to see if there are any trends in bigram words as well so went ahead and repeated the above process for the list of bigram words from which we noticed no other particular trend.
 
-**Preprocessing and Modeling**
-- Is text data successfully converted to a matrix representation?
-- Are methods such as stop words, stemming, and lemmatization explored?
-- Does the student properly split and/or sample the data for validation/training purposes?
-- Does the student test and evaluate a variety of models to identify a production algorithm (**AT MINIMUM:** Bayes and one other model)?
-- Does the student defend their choice of production model relevant to the data at hand and the problem?
-- Does the student explain how the model works and evaluate its performance successes/downfalls?
+We've also created a venn-diagram of the top 15 most frequent words from each of the subreddits to visualize if there were any other patterns or discrepancies we can notice and our findings were similar to above results.  One key observation that we made was that the word 'wife' actually appeared more often in the 'jokes' subreddit when we would normaly presume any words related to 'dad' or 'wife' would be more apparent in the 'dadjokes' subreddit.
 
-**Evaluation and Conceptual Understanding**
-- Does the student accurately identify and explain the baseline score?
-- Does the student select and use metrics relevant to the problem objective?
-- Does the student interpret the results of their model for purposes of inference?
-- Is domain knowledge demonstrated when interpreting results?
-- Does the student provide appropriate interpretation with regards to descriptive and inferential statistics?
+As far as our model selection goes, we decided to use a Logistic (Binomial) Regression using CountVectorizer which is used to predict the probability of a certain class or event in a binomial outcome scenario.  We also used a Multinomial Naive-Bayes modeling technique on lemmatized wordset which could be used to classify vectors based on probabilies of the training variables.  Using the models mentioned, we used a gridcv and pipelines to iterate and determine the best model parameters to obtain the most proficient model to use for our predictions.
 
-**Conclusion and Recommendations**
-- Does the student provide appropriate context to connect individual steps back to the overall project?
-- Is it clear how the final recommendations were reached?
-- Are the conclusions/recommendations clearly stated?
-- Does the conclusion answer the original problem statement?
-- Does the student address how findings of this research can be applied for the benefit of stakeholders?
-- Are future steps to move the project forward identified?
+We also created a confusion matrix to visualzie and determine the results of our findings for each of the models as well.
 
 
-### Organization and Professionalism
+### Conclusion
 
-**Project Organization**
-- Are modules imported correctly (using appropriate aliases)?
-- Are data imported/saved using relative paths?
-- Does the README provide a good executive summary of the project?
-- Is markdown formatting used appropriately to structure notebooks?
-- Are there an appropriate amount of comments to support the code?
-- Are files & directories organized correctly?
-- Are there unnecessary files included?
-- Do files and directories have well-structured, appropriate, consistent names?
+Compared to our baseline prediction of 52% (towards r/dadjokes), our models did outperform by a slight amount.  Our logistic Regression using CountVectorizer yielded a train/test scores of 90%/58% when using TfidfVectorizer yielded a train/test scores of 88%/57%.  Both vectorizers yielded a pretty close result (especially vs the test set) which were only ~5% above the baseline score.  As for our Multinomial Naive-Bayes model, it yielded a train/test result of 81%/56% which indicates that it performed slightly below the logistic regression models even though it still performed above the baseline score of 52% by approximately ~4%.
 
-**Visualizations**
-- Are sufficient visualizations provided?
-- Do plots accurately demonstrate valid relationships?
-- Are plots labeled properly?
-- Are plots interpreted appropriately?
-- Are plots formatted and scaled appropriately for inclusion in a notebook-based technical report?
-
-**Python Syntax and Control Flow**
-- Is care taken to write human readable code?
-- Is the code syntactically correct (no runtime errors)?
-- Does the code generate desired results (logically correct)?
-- Does the code follows general best practices and style guidelines?
-- Are Pandas functions used appropriately?
-- Are `sklearn` and `NLTK` methods used appropriately?
-
-**Presentation**
-- Is the problem statement clearly presented?
-- Does a strong narrative run through the presentation building toward a final conclusion?
-- Are the conclusions/recommendations clearly stated?
-- Is the level of technicality appropriate for the intended audience?
-- Is the student substantially over or under time?
-- Does the student appropriately pace their presentation?
-- Does the student deliver their message with clarity and volume?
-- Are appropriate visualizations generated for the intended audience?
-- Are visualizations necessary and useful for supporting conclusions/explaining findings?
+  
 
 
----
+### Recommendation
 
-### Why we choose this project for you?
-This project covers three of the biggest concepts we cover in the class: Classification Modeling, Natural Language Processing and Data Wrangling/Acquisition.
+In the end, if we were to select our best model, it would be our logistic regression model that used CountVectorizer with an accuracy score of 58% on the testing set.  However, we definitely need to investigate our case using more dataset (we only observed 2500 posts per reddit on a 5 month history).  Also, we need to see if we can accomodate our temporary limitations, which we view it as limitations that can be solved, such as evaluating repetition of texts in a single post.  There are also long term limitations such as "Are jokes too general as a topic to classify?" "What type of users are primarily apparent in r/jokes vs. r/dadjokes.
 
-Part 1 of the project focuses on **Data wrangling/gathering/acquisition**. This is a very important skill as not all the data you will need will be in clean CSVs or a single table in SQL.  There is a good chance that wherever you land you will have to gather some data from some unstructured/semi-structured sources; when possible, requesting information from an API, but often scraping it because they don't have an API (or it's terribly documented).
+We cannot conclusively say we have model that can predict the nature of 'jokes' yet but it does seem like something that is possible if we were to have additional data sources to surpass our limitations.
 
-Part 2 of the project focuses on **Natural Language Processing** and converting standard text data (like Titles and Comments) into a format that allows us to analyze it and use it in modeling.
 
-Part 3 of the project focuses on **Classification Modeling**.  Given that project 2 was a regression focused problem, we needed to give you a classification focused problem to practice the various models, means of assessment and preprocessing associated with classification.   
+### Datasets
+
+- [dadjokes dataset](./dataset/dadjokes.csv)
+- [jokes dataset](./dataset/jokes.csv)
+
+These datasets are scraped data from r/dadjokes & r/jokes using pushshift.io API.
+
+
+
+
