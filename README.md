@@ -43,8 +43,8 @@ We cannot conclusively say we have model that can predict the nature of 'jokes' 
 
 ### Datasets
 
-- [dadjokes dataset](./dataset/dadjokes.csv)
-- [jokes dataset](./dataset/jokes.csv)
+- [dadjokes dataset](./dataset/dadjokes)
+- [jokes dataset](./dataset/jokes)
 
 These datasets are scraped data from r/dadjokes & r/jokes using pushshift.io API.
 
